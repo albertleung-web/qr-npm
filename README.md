@@ -1,1 +1,1 @@
-#Generate vCalendar Event QR code
+# Generate vCalendar Event QR code
