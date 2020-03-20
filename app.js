@@ -51,6 +51,13 @@ http.createServer((req, res) => {
         }, 30000);
     }
     else
+    if (path == '/index.html'){
+        fs.readFile("." + path, function(error, content) {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(content, 'utf-8');
+        });
+    }
+    else
     if (path == '/favicon.ico'){
         res.writeHead(200);
         res.end();
