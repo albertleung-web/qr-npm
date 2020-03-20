@@ -1,0 +1,19 @@
+{
+  "name": "qr-npm",
+  "version": "1.0.0",
+  "description": "Generate QR code for vCalendar Event",
+  "main": "app.js",
+  "dependencies": {
+    "qrcode": "^1.4.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "main": "app.js"
+}
