@@ -1,1 +1,4 @@
-http://localhost:8080/app.js?start=20200324T110000&end=20200324T131500&summary=Meeting&location=Slack
+http://localhost:8080/app.js?expire=10000&start=20200324T110000&end=20200324T131500&summary=Meeting&location=Slack
+http://localhost:8080/index.html
+http://qr-npm-git-qr-npm.apps.us-east-1.starter.openshift-online.com/app.js?expire=30000&start=20200324T110000&end=20200324T131500&summary=Project%20Meeting&location=Slack
+http://qr-npm-git-qr-npm.apps.us-east-1.starter.openshift-online.com/index.html

@@ -3,8 +3,10 @@ const fs = require('fs');
 const http = require('http');
 const url = require('url');
 
-var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080
-var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0'
+var server_port = 8080;
+var server_ip_address = '0.0.0.0';
+var timer = null;
+var expire;
 
 const template = "BEGIN:VCALENDAR\n"+
     "VERSION:2.0\n"+
@@ -16,9 +18,14 @@ const template = "BEGIN:VCALENDAR\n"+
     "END:VEVENT\n"+
     "END:VCALENDAR";
 
+fs.copyFile("./wait.gif", "./qrcode.png", (err) => {
+    if (err) throw err;
+});
+
 http.createServer((req, res) => {
 
     const path = url.parse(req.url,true).pathname;
+    console.log((new Date()).toTimeString() + " " + path);
 
     if (path == '/app.js'){
         const queries = url.parse(req.url,true).query;
@@ -31,10 +38,18 @@ http.createServer((req, res) => {
         console.log(event);
 
         QRCode.toFile('./qrcode.png', event);
-
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.write('<html><body><img src="./qrcode.png"/></body></html>');
+        res.write('<html><body bgcolor="#000000"><img src="./qrcode.png"/></body></html>');
         res.end();
+
+        if (timer != null)
+            clearTimeout(timer);
+        timer = setTimeout(function() {
+            console.log((new Date()).toTimeString() + ' qr code expired');
+            fs.copyFile("./wait.gif", "./qrcode.png", (err) => {
+                if (err) throw err;
+            });
+        }, queries.expire || 10000);
     }
     else
     if (path == '/qrcode.png'){
@@ -42,13 +57,6 @@ http.createServer((req, res) => {
             res.writeHead(200, { 'Content-Type': 'image/png' });
             res.end(content, 'utf-8');
         });
-        setTimeout(function() {
-            console.log('qr code expired');
-            fs.copyFile("./happyface.png", "." + path, (err) => {
-                if (err) throw err;
-                console.log('qrcode replaced');
-            });
-        }, 30000);
     }
     else
     if (path == '/index.html'){
