@@ -25,7 +25,7 @@ fs.copyFile("./wait.gif", "./qrcode.png", (err) => {
 http.createServer((req, res) => {
 
     const path = url.parse(req.url,true).pathname;
-    console.log((new Date()).toTimeString() + " " + path);
+    //console.log((new Date()).toTimeString() + " " + path);
 
     if (path == '/app.js'){
         const queries = url.parse(req.url,true).query;
@@ -36,6 +36,7 @@ http.createServer((req, res) => {
             .replace("{start}", queries.start)
             .replace("{end}", queries.end);
         console.log(event);
+        console.log((new Date()).toString() + " qr code expire in " + queries.expire || 10000);
 
         QRCode.toFile('./qrcode.png', event);
         res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -45,7 +46,7 @@ http.createServer((req, res) => {
         if (timer != null)
             clearTimeout(timer);
         timer = setTimeout(function() {
-            console.log((new Date()).toTimeString() + ' qr code expired');
+            console.log((new Date()).toString() + ' qr code expired');
             fs.copyFile("./wait.gif", "./qrcode.png", (err) => {
                 if (err) throw err;
             });
