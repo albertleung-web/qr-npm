@@ -36,7 +36,7 @@ http.createServer((req, res) => {
             .replace("{start}", queries.start)
             .replace("{end}", queries.end);
         console.log(event);
-        console.log((new Date()).toString() + " qr code expire in " + queries.expire || 10000);
+        console.log((new Date()).toString() + " qr code expire in " + (queries.expire || 10000));
 
         QRCode.toFile('./qrcode.png', event);
         res.writeHead(200, { 'Content-Type': 'text/html' });
