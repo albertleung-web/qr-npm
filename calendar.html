@@ -1,0 +1,34 @@
+<html>
+    <style>
+        input[type="text"], input[type="submit"] {
+            font-size:25px;
+        }
+    </style>
+    <script>
+        function resetUrl(){
+            window.history.pushState({}, document.title, "/app.js" );
+        }
+    </script>
+      <head>
+        <title>Calendar QR Code</title>
+      </head>
+    <body bgcolor="#000000" onload="resetUrl()">
+        <table>
+            <tr>
+                <td valign="top">
+                    <img src="./qrcode.png"/>
+                </td>
+                <td valign="top">
+                    <form action="/app.js">
+                        <input type="text" id="summary" name="summary" value="{summary}" placeholder="Title"><br>
+                        <input type="text" id="location" name="location" value="{location}" placeholder="Location"><br>
+                        <input type="text" id="startd" name="startd" value="{startd}" placeholder="YYMMDD" pattern="[0-9]{6}" maxlength="6" size="8">
+                        <input type="text" id="startt" name="startt" value="{startt}" placeholder="HHMM" pattern="[0-9]{4}" maxlength="4" size="6"><br>
+                        <br>
+                        <input type="submit" value = "Generate">
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

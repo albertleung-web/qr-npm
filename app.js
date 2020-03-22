@@ -7,6 +7,7 @@ var server_port = 8080;
 var server_ip_address = '0.0.0.0';
 var timer = null;
 var expire;
+var expire_default = 60;
 
 const template = "BEGIN:VCALENDAR\n"+
     "VERSION:2.0\n"+
@@ -14,7 +15,7 @@ const template = "BEGIN:VCALENDAR\n"+
     "SUMMARY;CHARSET=utf-8:{summary}\n"+
     "LOCATION;CHARSET=utf-8:{location}\n"+
     "DTSTART:{start}\n"+
-    "DTEND:{end}\n"+
+    "DURATION:PT15M\n"+
     "END:VEVENT\n"+
     "END:VCALENDAR";
 
@@ -31,17 +32,22 @@ http.createServer((req, res) => {
         const queries = url.parse(req.url,true).query;
 
         var event = template
-            .replace("{summary}", queries.summary)
-            .replace("{location}", queries.location)
-            .replace("{start}", queries.start)
-            .replace("{end}", queries.end);
+            .replace("{summary}", (queries.summary || ""))
+            .replace("{location}", (queries.location || ""))
+            .replace("{start}", "20" + (queries.startd || "") + "T" + (queries.startt || "") + "00");
         console.log(event);
-        console.log((new Date()).toString() + " qr code expire in " + (queries.expire || 10000));
+        console.log((new Date()).toString() + " qr code expire in " + (queries.expire || expire_default) + " sec");
 
         QRCode.toFile('./qrcode.png', event);
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.write('<html><body bgcolor="#000000"><img src="./qrcode.png"/></body></html>');
-        res.end();
+        fs.readFile("./calendar.html", function(error, content) {
+            var calendar = content.toString()
+                .replace("{summary}", (queries.summary || ""))
+                .replace("{location}", (queries.location || ""))
+                .replace("{startd}", (queries.startd || ""))
+                .replace("{startt}", (queries.startt || ""));
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(calendar, 'utf-8');
+        });
 
         if (timer != null)
             clearTimeout(timer);
@@ -50,7 +56,7 @@ http.createServer((req, res) => {
             fs.copyFile("./wait.gif", "./qrcode.png", (err) => {
                 if (err) throw err;
             });
-        }, queries.expire || 10000);
+        }, (queries.expire || expire_default) * 1000 );
     }
     else
     if (path == '/qrcode.png'){
