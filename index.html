@@ -2,7 +2,7 @@
 <html lang="en">
   <script>
       function ws_connect(){
-        console.log("start connect");
+        console.log((new Date()).toTimeString() + " start connect");
         var myWebSocket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
         myWebSocket.onmessage = function(e) {
             console.log(e.data);
@@ -12,16 +12,16 @@
             }, 500);
         };
         myWebSocket.onclose = function(e) {
-            console.log("closed");
+            console.log((new Date()).toTimeString() + " closed: ", e);
             setTimeout(function() {
               ws_connect();
             }, 1000);
         };
         myWebSocket.onerror = function(e){
-            console.log("error: ", e);
+            console.log((new Date()).toTimeString() + " error: ", e);
         };
         myWebSocket.onopen = function(e){
-            console.log("open");
+            console.log((new Date()).toTimeString() + " open");
         };
       }
   </script>
