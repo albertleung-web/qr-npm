@@ -2,7 +2,7 @@
 <html lang="en">
   <script>
       function ws_connect(){
-        var myWebSocket = new WebSocket("ws://" + window.location.hostname + ":8000");
+        var myWebSocket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
         myWebSocket.onmessage = function(e) {
             console.log(e.data);
             setTimeout(() => {

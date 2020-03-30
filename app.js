@@ -5,12 +5,10 @@ const url = require('url');
 const WebSocketServer = require('ws').Server;
 
 var server_port = 8080;
-var ws_server_port = 8000;
 var server_ip_address = '0.0.0.0';
 var timer = null;
 var expire;
 var expire_default = 60;
-var wss = new WebSocketServer({"port": ws_server_port});
 
 const template = "BEGIN:VCALENDAR\n"+
     "VERSION:2.0\n"+
@@ -33,7 +31,7 @@ function notifyClients(msg){
     });
 }
 
-http.createServer((req, res) => {
+const server = http.createServer((req, res) => {
 
     const path = url.parse(req.url,true).pathname;
     //console.log((new Date()).toTimeString() + " " + path);
@@ -100,8 +98,9 @@ http.createServer((req, res) => {
 })
 .listen(server_port, server_ip_address);
 
+var wss = new WebSocketServer({server});
+
 console.log('Node server running on server ' +
     server_ip_address +
-    ' port ' + server_port +
-    ' websocket ' + ws_server_port);
+    ' port ' + server_port);
 
