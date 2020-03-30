@@ -4,16 +4,13 @@
   "description": "Generate QR code for vCalendar Event",
   "main": "app.js",
   "dependencies": {
-    "qrcode": "^1.4.4"
+    "qrcode": "^1.4.4",
+    "ws": "^7.2.3"
   },
   "devDependencies": {},
   "scripts": {
     "start": "node app.js"
   },
   "author": "",
-  "license": "ISC",
-  "scripts": {
-    "start": "node app.js"
-  },
-  "main": "app.js"
+  "license": "ISC"
 }

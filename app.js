@@ -2,12 +2,15 @@ const QRCode = require('qrcode');
 const fs = require('fs');
 const http = require('http');
 const url = require('url');
+const WebSocketServer = require('ws').Server;
 
 var server_port = 8080;
+var ws_server_port = 8000;
 var server_ip_address = '0.0.0.0';
 var timer = null;
 var expire;
 var expire_default = 60;
+var wss = new WebSocketServer({"port": ws_server_port});
 
 const template = "BEGIN:VCALENDAR\n"+
     "VERSION:2.0\n"+
@@ -23,6 +26,13 @@ fs.copyFile("./wait.gif", "./qrcode.png", (err) => {
     if (err) throw err;
 });
 
+function notifyClients(msg){
+    console.log("Notify client, count = " + wss.clients.size);
+    wss.clients.forEach(function each(client) {
+        client.send(msg);
+    });
+}
+
 http.createServer((req, res) => {
 
     const path = url.parse(req.url,true).pathname;
@@ -36,7 +46,8 @@ http.createServer((req, res) => {
             .replace("{location}", (queries.location || ""))
             .replace("{start}", "20" + (queries.startd || "") + "T" + (queries.startt || "") + "00");
         console.log(event);
-        console.log((new Date()).toString() + " qr code expire in " + (queries.expire || expire_default) + " sec");
+        var msg = (new Date()).toString() + " qr code expire in " + (queries.expire || expire_default) + " sec";
+        console.log(msg);
 
         QRCode.toFile('./qrcode.png', event);
         fs.readFile("./calendar.html", function(error, content) {
@@ -52,11 +63,15 @@ http.createServer((req, res) => {
         if (timer != null)
             clearTimeout(timer);
         timer = setTimeout(function() {
-            console.log((new Date()).toString() + ' qr code expired');
+            var msg = (new Date()).toString() + ' qr code expired';
+            console.log(msg);
             fs.copyFile("./wait.gif", "./qrcode.png", (err) => {
                 if (err) throw err;
             });
+            notifyClients(msg);
         }, (queries.expire || expire_default) * 1000 );
+
+        notifyClients(msg);
     }
     else
     if (path == '/qrcode.png'){
@@ -84,5 +99,9 @@ http.createServer((req, res) => {
 
 })
 .listen(server_port, server_ip_address);
-console.log('Node server running on server ' + server_ip_address + ' port ' + server_port);
+
+console.log('Node server running on server ' +
+    server_ip_address +
+    ' port ' + server_port +
+    ' websocket ' + ws_server_port);
 
