@@ -2,6 +2,7 @@
 <html lang="en">
   <script>
       function ws_connect(){
+        console.log("start connect");
         var myWebSocket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
         myWebSocket.onmessage = function(e) {
             console.log(e.data);
@@ -11,11 +12,18 @@
             }, 500);
         };
         myWebSocket.onclose = function(e) {
+            console.log("closed");
             setTimeout(function() {
               ws_connect();
             }, 1000);
-          };
-        }
+        };
+        myWebSocket.onerror = function(e){
+            console.log("error: ", e);
+        };
+        myWebSocket.onopen = function(e){
+            console.log("open");
+        };
+      }
   </script>
   <head>
     <title>Calendar Event</title>
