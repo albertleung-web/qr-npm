@@ -22,6 +22,8 @@
         };
         myWebSocket.onopen = function(e){
             console.log((new Date()).toTimeString() + " open");
+            var myImageElement = document.getElementById('qrcode');
+            myImageElement.src = './qrcode.png?rand=' + Math.random();
         };
       }
   </script>
